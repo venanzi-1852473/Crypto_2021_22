@@ -1,0 +1,65 @@
+\chapter{Number Theory}
+
+\section{Modular arithmetic}
+Consider $\zn = \{ 0,1, ..., n-1 \}$.\newline
+On integers $mod$ $n$, $(\zn,+)$ is a group:
+\begin{itemize}
+    \item[-] \textbf{Identity}: $\exists 0 \in \zn$ s.t. $\forall a \in \zn$ $a + 0 = a$ \modn
+    \item[-] \textbf{Addition}: $\forall a,b \in \zn$ $a+b = b+a$ \modn
+    \item[-] \textbf{Inverse}: $\forall a \in \zn$ $\exists a^{-1} \in \zn$ s.t. $a + a^{-1} = 0$  
+\end{itemize}
+
+Can be proven that $(\zn,\cdot)$ is not always a group.
+
+
+\section{GroupGen}
+Let $\grpgen$ be an algorithm that takes as input a security parameter $\lambda$ and returns the description of a group.
+\[ \unisample{\grp}{\grpgen} \]
+$\mathbb{G}$ is a \textbf{cyclic group}\newline
+$g$ is the \textbf{generator} of the group\newline
+$q$ is the \textbf{order} of the group
+
+
+\section{Discrete Log - DL}
+$\mathbb{G}$ is usually $\mathbb{Z}_p^*$, where $p$ is a large prime.\newline
+Note that because $p$ is a prime then $q = p-1$.
+
+$GAME$:
+\begin{enumerate}
+    \item C samples $\unisample{\grp}{\grpgen}$
+    \item C samples $\unisample{x}{\mathbb{Z}_p}$ \todo{my notes say $\mathbb{Z}_q$; I think it's wrong}
+    \item C calculates $y = g^x$ in $\mathbb{G}$ (i.e. $g^x$ $mod$ $p$)
+    \item C sends $\grp$ and $y$
+    \item A sends back $x'$
+\end{enumerate}
+A wins if $y = g^{x'}$.
+
+Assumption: DL defines a OWF.
+
+
+\section{Decisional Diffie Hellman - DDH}
+Consider the following games.
+
+\begin{multicols}{2}
+    $REAL$:
+    \begin{enumerate}
+        \item C samples \newline$\unisample{\grp}{\grpgen}$
+        \item C samples $\unisample{x,y}{\mathbb{Z}_n}$
+        \item C calculates $X = g^x$, $Y = g^y$, $Z = g^{xy}$
+        \item C sends $\grp, X, Y, Z$ to A
+        \item A sends $b'$
+    \end{enumerate}
+
+    \columnbreak
+
+    $RAND$:
+    \begin{enumerate}
+        \item C samples\newline $\unisample{\grp}{\grpgen}$
+        \item C samples $\unisample{x,y,z}{\mathbb{Z}_n}$
+        \item C calculates $X = g^x$, $Y = g^y$, $Z = g^z$
+        \item C sends $\grp, X, Y, Z$ to A
+        \item A sends $b'$
+    \end{enumerate}
+\end{multicols}
+$b'$ says whether A thinks $Z$ is $g^{xy}$ or $g^z$.\newline
+A wins if it understands where $Z$ comes from.

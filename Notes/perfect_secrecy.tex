@@ -1,0 +1,37 @@
+\chapter{Perfect Secrecy}
+
+A ciphertext is perfectly secret if it reveals nothing about the plaintext.
+
+Let $M$ be the space of messages (plaintext), $C$ be the space of ciphertexts and $k$ a key.\\
+$\forall m \in M$, $\forall c \in C$, let $C = Enc(k,M)$
+\[ Pr[M = m] = Pr[M=m \vert C=c] \]
+
+Some equivalent definitions of perfect secrecy:
+\begin{itemize}
+    \item[-] $Pr[M = m] = Pr[M=m \vert C=c]$
+    \item[-] $M$ and $C$ are independent
+    \item[-] $\forall m,m' \in \mathcal{M}$, $\forall c \in C$ $Pr[Enc(k,m)=c] = Pr[Enc(k,m')=c]$  
+\end{itemize}
+
+
+\section{One Time Pad - OTP}
+Let $k,m,c \in \bin^\lambda$
+
+$Enc(k,m) = c = k \oplus m$\\
+$Dec(k,c) = c \oplus k = (k \oplus m) \oplus k = m$
+
+\begin{theorem}
+    Above OTP is perfectly secret.
+\end{theorem}
+
+\begin{proof}
+$ $\newline
+$Pr[Enc(k,m)=c] = Pr[k \oplus m = c] = Pr[k = c \oplus m] = 2^{-\lambda}$\\
+$Pr[Enc(k,m')=c] = Pr[k \oplus m' = c] = Pr[k = c \oplus m'] = 2^{-\lambda}$
+\end{proof}
+
+Limitations:
+\begin{itemize}
+    \item[-] $\cardinality{k} = \cardinality{m}$
+    \item[-] One time 
+\end{itemize}

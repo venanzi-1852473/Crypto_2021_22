@@ -1,0 +1,31 @@
+
+
+\newcommand{\todo}[1]{\begin{center} \fbox{#1} \end{center}}
+\newcommand{\cardinality}[1]{\vert #1 \vert}        %|A|
+\newcommand{\func}[3]{#1 : #2 \rightarrow #3}       %A : B -> C
+
+\newcommand{\bin}{\{0,1\}}  % {0,1}
+\newcommand{\compclose}{\approx_c}
+\newcommand{\poly}{can repeat poly-times}
+\newcommand{\zn}{\mathbb{Z}_n}
+\newcommand{\modn}{$mod$ $n$}   %not too elegant, I would prefer to enclose the command in $$, but it's easier like this
+
+%NUMBER THEORY
+\newcommand{\grpgen}{GroupGen(1^\lambda)}
+\newcommand{\grp}{(\mathbb{G},g,q)}
+
+%PKE
+\newcommand{\kgen}{KGen(1^\lambda)}
+\newcommand{\keys}{(p_k,s_k)}
+\newcommand{\setup}{Setup(1^\lambda)}
+\newcommand{\setupcpl}{(\omega, \tau)}
+\newcommand{\samp}{Samp(1^\lambda)}
+
+\newcommand{\transcript}{ (\mathcal{P}(pk,sk) \rightleftarrows \mathcal{V}(pk)) }
+
+\newcommand{\bilgen}{BilGroupGen(1^\lambda)}
+\newcommand{\bilgroup}{(\mathbb{G}, \mathbb{G}_T, q, g, \hat{e})}
+
+\newcommand{\dollarsample}{\leftarrow\kern-0.42em{\$}}   %<-$
+\newcommand{\unisample}[2]{#1 \dollarsample \; #2}      %uniform sampling; eg. s <-$ {0,1}^k
+\newcommand{\cpa}[1]{\textit{goto #1 $poly(\lambda)$ times}}

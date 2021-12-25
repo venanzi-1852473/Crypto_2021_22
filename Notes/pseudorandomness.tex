@@ -1,0 +1,167 @@
+\chapter{Pseudorandomness}
+
+\section{Pseudo Random Generator - PRG}
+A deterministic function $\func{G}{\bin^\lambda}{\bin^{\lambda + l}}$ is a PRG with stretch $l = l(\lambda)$ if:
+\begin{itemize}
+    \item[-] $G$ if poly-time computable
+    \item[-] $l(\lambda) \geq 1$
+    \item[-] $G(U_\lambda) \compclose U_{\lambda + l}$  
+\end{itemize}
+
+Where $U_\lambda$ is the space of uniformely distributed keys of length $\lambda$ ($U_{\lambda + l}$ accordingly).
+
+
+\section{Computationally close}
+Simply put, if two things are computationally close it means that we can distinguish them only with negligible probability.\\
+For instance:
+\begin{multicols}{2}
+    $REAL_{G,A}(\lambda)$
+    \begin{enumerate}
+        \item C picks $\unisample{s}{\bin^\lambda}$
+        \item C calculates $z = G(s)$
+        \item C sends $z$ to A
+        \item A sends back $b' \in \bin$
+    \end{enumerate}
+    
+    \columnbreak
+
+    $RAND_{G,A}(\lambda)$\\
+    Exactly like $REAL$, except that $s$ is not picked and $z$ is calculated as \newline $\unisample{z}{U_{\lambda + l}}$.
+\end{multicols}
+
+$b'$ represents whether A thinks that $z$ comes from game $REAL$ or game $RAND$ (i.e. has calculated with $G$ or has been sampled from $U_{\lambda + l}$).\\
+If $REAL \compclose RAND$ then the probability that A is right is negligible.
+\newpage
+
+\section{Hardcore predicate}
+Let $\func{h}{\bin^\lambda}{\bin}$ be a polynomial time function.\\
+Let $\func{f}{\bin^\lambda}{\bin^\lambda}$ be a OWF.\\
+Then $h$ is a \textbf{hard core predicate} for $f$ if:
+\[ (f(U_\lambda), h(U_\lambda)) \compclose (f(U_\lambda), U_1) \]
+
+
+\section{CPA security}
+\textbf{Chosen Plaintext Attack - CPA}.\\
+$\Pi = (Enc,Dec)$ is CPA secure if $GAME_{\Pi , A}^{CPA}(\lambda,0) \compclose GAME_{\Pi , A}^{CPA}(\lambda,1)$
+
+$GAME_{\Pi , A}^{CPA}(\lambda,b)$:
+\begin{enumerate}
+    \item C samples a key $\unisample{k}{\mathcal{K}}$
+    \item A sends a message $m'$ and gets back from C a cipher $c'$ for $m'$ (\poly)
+    \item A sends messages $m_0,m_1$ to C
+    \item C sends $\unisample{c}{Enc(k,m_b)}$ to A ($b$ either $0$ or $1$)
+    \item A sends a message $m'$ and gets back from C a cipher $c'$ for $m'$ (\poly)
+    \item A sends $b' \in \bin$
+\end{enumerate}
+$GAME = 1$ (A wins) if $b' = b$; i.e. A understands whether C encrypted $m_0$ or $m_1$.
+
+
+\section{Pseudo Random Function families}
+It's a powerful generalization of PRGs.\\
+Let $\mathcal{F} = \{ \func{f_k}{\bin^m}{\bin^l} \}$. $\mathcal{F}$ is a PRF family if $REAL_{\mathcal{F},A}(\lambda) \compclose RAND_{\mathcal{F},A}(\lambda)$.
+
+Shape of the two games:
+\begin{enumerate}
+    \item A sends $x$ to C and C responds with $z$ (\poly)
+    \item A sends $b'$
+\end{enumerate}
+$b'$ says whether A thinks the game currently played is $REAL$ or $RAND$.
+
+In $REAL$ C samples a key $\unisample{k}{\bin^\lambda}$ and calculates $z = f_k(x)$.
+
+In $RAND$ C samples $\unisample{R}{\mathcal{R}(m,l,\lambda)}$ and calculates $z = R(x)$.\newline
+$\mathcal{R}$ is a set of functions from $\bin^m$ to $\bin^l$. $\cardinality{\mathcal{R}} = 2^{2^m \cdot l}$.\newline
+Note that $R$ is deterministic, but randomly sampled from $\mathcal{R}$, so we can think of it as a random function (for the adversary the distribution of $R$ and a random function should look the same).
+\todo{Is the very last thing correct?}
+\newpage
+
+\section{Message Authentication} \label{psudo:mauth}
+Alice wants to send a message to Bob. To make sure that the message that Bob receives is the one sent by Alice they need some sort of authentication scheme.\newline
+
+Let $\func{Tag}{\mathcal{K} \times \mathcal{M} }{\tau}$ a MAC.\newline
+Let $k$ be a key and $m$ a message.
+$Tag(k,m) = \tau$, $\tau$ is the authentication tag, calculated by Alice; when Bob will receive the message $m'$ (supposedly $m' = m$) he will calculate $Tag(k,m') = \tau'$. If $\tau' = \tau$ then Bob knows that the message is the one sent by Alice.
+
+
+\section{Universal Forgeability CMA - UF CMA}
+Let $\Pi = Tag$ as in \nameref{psudo:mauth}. $\Pi$ if UF-CMA if $\forall$PPT A
+\[ Pr[GAME_{\Pi,A}^{UF-CMA} (\lambda) = 1] \leq negl(\lambda) \]
+
+$GAME_{\Pi,A}^{UF-CMA} (\lambda)$:
+\begin{enumerate}
+    \item C samples a key $\unisample{k}{\mathcal{K}}$
+    \item A sends a message $m$ to C and C replies with $\tau = Tag(k,m)$ (\poly)
+    \item A sends a message $m^*$ and a tag $\tau^*$
+\end{enumerate}
+A wins (i.e. $GAME = 1$) if $Tag(k,m^*) = \tau^*$ and $m^* \in \{m\}$.
+
+Condition: A can't send $m^* = m$ in order to send $\tau^* = \tau$ and win the game.
+
+
+\section{Almost Universality - AU}
+Let $\mathcal{H} = \{ \func{h_s}{\bin^n}{\bin^m} \}_{s \in \bin^\lambda}$ be a family of \textbf{Collision Resistant Hard functions - CRH}.\newline
+$\mathcal{H}$ if $\varepsilon-AU$ if $\forall m,m' \in \bin^n$ ($m \neq m'$) we have that $Pr[h_s (m) = h_s(m')] \leq \varepsilon = negl(\cardinality{s})$.
+
+\newpage
+\section{Pseudo Random Permutation - PRP}
+$\mathcal{F} = \{ \func{f_k}{\bin^n}{\bin^n} \}$ is a PRP if $\forall x \in \bin^\lambda$ $\exists f_k^{-1}$ s.t.\newline
+$f_k^{-1} (f_k(x)) = x$.\newline
+Moreover $REAL_{\mathcal{F},A} \compclose RAND_{\mathcal{F},A}$.
+
+\begin{multicols}{2}
+    $REAL_{\mathcal{F},A}$
+    \begin{enumerate}
+        \item C samples a key $\unisample{k}{\mathcal{K}}$
+        \item A sends a message $m$ to C and C replies with $z = f_k(x)$ (\poly)
+        \item A sends $b'$
+    \end{enumerate}
+
+    \columnbreak
+
+    $RAND_{\mathcal{F},A}$
+    \begin{enumerate}
+        \item C samples a permutation\newline $\unisample{P}{\mathcal{P}}(n,\lambda)$
+        \item A sends a message $m$ to C and C replies with $z = P(x)$ (\poly)
+        \item A sends $b'$
+    \end{enumerate}
+\end{multicols}
+$b'$ represents whether A thinks that $z$ comes from $REAL$ or $RAND$.\newline
+$\mathcal{P}(n,\lambda)$ is the set of all possible permutations ovre $\bin^n$
+
+
+\section{Chosen Ciphertext Attack - CCA}
+CCA security is an enhancement of CPA, where the adversary can even send a ciphertext and see its plaintext (i.e. the adversary can decrypt).
+$\Pi = (Enc,Dec)$ is CCA-secure if $GAME_{\Pi, A}^{CCA} (\lambda,0) \compclose GAME_{\Pi, A}^{CCA} (\lambda,1)$
+
+$GAME_{\Pi, A}^{CCA} (\lambda,b)$:
+\begin{enumerate}
+    \item C samples a key $\unisample{k}{\mathcal{K}}$
+    \item A sends a message $m_i$ to C and C sends back a ciphertext $\unisample{c_i}{Enc(k,m_i)}$ (\poly)
+    \item A sends a cipher $c_i'$ to C and C sends back the plaintext $m_i' = Dec(k,c_i')$ (\poly)
+    \item A sends two messages $m_0^*,m_1^*$
+    \item C replies with a ciphertext $\unisample{c^*}{Enc(k,m_b^*)}$ ($b \in \bin$)
+    \item A sends a message $m_i$ to C and C sends back a ciphertext $\unisample{c_i}{Enc(k,m_i)}$ (\poly)
+    \item A sends a cipher $c_i'$ to C and C sends back the plaintext $m_i' = Dec(k,c_i')$ (\poly)
+    \item A sends $b'$
+\end{enumerate}
+A wins if $b' = b$; i.e. A understood whether C encrypted $m_0$ or $m_1$.\newline
+Notice that $2. \equiv 6.$ and $3. \equiv 7.$
+
+
+\section{Authenticity}
+It should be hard to produce a \textbf{valid} cipher without knowing the key, so the decryption algorithm can also output a symbol $\perp$ if the ciphertext is invalid.
+\[ \func{Dec}{\mathcal{K} \times \mathcal{C} } {\mathcal{M} \cup \{\perp\}} \]
+
+$\Pi = (Enc,Dec)$ satisfies authenticity if $\forall$PPT A $Pr[GAME_{\Pi,A}^{AUTH} (\lambda) = 1] \leq negl(\lambda)$
+
+$GAME_{\Pi,A}^{AUTH} (\lambda)$:
+\begin{enumerate}
+    \item C samples a key $\unisample{k}{\mathcal{K}}$
+    \item A sends a message $m_i$ to C and C replies with $\unisample{c_i}{Enc(k,m_i)}$ (\poly)
+    \item A sends a cipher $c^*$
+\end{enumerate}
+Output 1 if both of the followings are true:
+\begin{itemize}
+    \item[-] $Dec(k,c^*) \neq \perp$
+    \item[-] $c^* \not\in \{ c_i \}$
+\end{itemize}

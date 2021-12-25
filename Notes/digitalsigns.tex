@@ -1,0 +1,73 @@
+\chapter{Digital signatures}
+We will still use $\kgen$, but also two new algorithms: $Sign$ and $Verify$.
+
+\textbf{Signature}
+\[ \unisample{\sigma}{Sign(m,sk)} \]
+$m$ is a message and $sk$ a secret key sampled from $KGen$. $\sigma$ is a signature for $m$.
+
+\textbf{Verification}
+\[ Verify((m,\sigma),pk) = \bin \]
+The output says whether $\sigma$ is a valid signature for $m$.
+
+
+\section{UF-CMA}
+$\Pi = (Kgen, Sign, Verify)$ is UF-CMA if $\forall$PPT A $Pr[ GAME_{\Pi,A}^{UF-CMA} (\lambda) = 1 ] \leq negl(\lambda)$
+
+$GAME_{\Pi,A}^{UF-CMA} (\lambda)$:
+\begin{enumerate}
+    \item C samples $\unisample{\keys}{\kgen}$
+    \item A sends message $m$ to C, C calculates $\unisample{\sigma}{Sign(sk,m)}$ and sends it back to A (\poly)
+    \item A sends $m^*,\sigma^*$ to C
+\end{enumerate}
+Output 1 if $Verify(pk,m^*,\sigma^*) = 1$
+
+
+\section{Transcript}
+Alice not only wants to convince Bob that she has Bob's $pk$ \fbox{is that right?} but she also wants to convince him that she's indeed Alice.
+
+We now have an algorithm $\mathcal{P}$, for the Prover Alice, and an algorithm $\mathcal{V}$, for the verifier Bob.
+\[ \unisample{\tau}{\transcript} \]
+
+This construction grants \nameref{digsign:passsec}.
+
+
+\section{Passive security} \label{digsign:passsec}
+$\Pi = (Kgen, \mathcal{P}, \mathcal{V})$ is passive-secure if $\forall$PPT A $Pr[GAME_{\Pi,A}^{ID}(\lambda) = 1] \leq negl(\lambda)$
+
+$GAME_{\Pi,A}^{ID}(\lambda)$:
+\begin{enumerate}
+    \item C samples $\unisample{\keys}{\kgen}$
+    \item C sends $pk$ to A
+    \item A sends an empty query to C and C replies with $\unisample{\tau}{\transcript}$ (\poly)
+    \item Run many interactions on "Impersonation"
+\end{enumerate}
+Return 1 if at the end of the "Impersonation" part $\mathcal{V}$ returns 1
+
+ID schemes that grant passive security can be built with:
+\begin{itemize}
+    \item \nameref{digsign:hvzk}
+    \item \nameref{digsign:ss}
+\end{itemize}
+
+
+\section{Honest Verifier Zero Knowledge - HVZK} \label{digsign:hvzk}
+$\Pi = (KGen, \mathcal{P}, \mathcal{V})$ is HVZK if $\exists$PPT $Sim$ (Simulator) s.t.
+\[ REAL_\Pi^{ID}(\lambda) \compclose SIMU_\Pi^{ID}(\lambda) \]
+
+$REAL_\Pi^{ID}(\lambda) \equiv \{ pk,sk,\transcript \vert \unisample{\keys}{\kgen} \} $
+
+$SIMU_\Pi^{ID}(\lambda) \equiv \{ pk,sk,Sim(pk) \vert \unisample{\keys}{\kgen} \} $
+
+The idea is that honestly computed transcripts reveal nothing on $sk$, as it can also be obtained by running $Sim(pk)$
+
+
+\section{Special Soundness - SS} \label{digsign:ss}
+Let $\Pi$ be a $\Sigma-protocol$ \fbox{Explanation of $\Sigma-protocol$ has been skipped for now}. $\Pi$ is SS if $Pr[ GAME_{\Pi,A}^{SS})(\lambda) = 1 ] \neq negl(\lambda)$
+
+$GAME_{\Pi,A}^{SS})(\lambda)$:
+\begin{enumerate}
+    \item C samples $\unisample{\keys}{\kgen}$
+    \item C sends $pk$ to A
+    \item A sends $\alpha,\beta,\beta',\gamma,\gamma'$
+\end{enumerate}
+Output 1 if $\beta \neq \beta'$ and $\mathcal{V}(pk, (\alpha,\beta,\gamma)) = \mathcal{V}(pk, (\alpha,\beta',\gamma')) = 1$.

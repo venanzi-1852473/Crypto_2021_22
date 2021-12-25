@@ -1,0 +1,31 @@
+\chapter{Computational Security}
+
+\section{Polynomial}
+A function $\func{p}{\mathbb{N}}{\mathbb{N}}$ is polynomial in $\lambda$ (i.e. $p(\lambda) = poly(\lambda)$) if:\newline
+$\exists c \geq  0$ s.t. $p(\lambda) = O(\lambda^c) \longrightarrow$ $\exists c,c',\lambda_0 \in \mathbb{N}$ s.t. $\lambda \geq \lambda_0$ $p(\lambda) \leq c' \cdot \lambda^c$.
+
+A function that runs in polynomial time is said to be efficient.
+
+
+\section{Negligible}
+A function $\func{\varepsilon}{\mathbb{N}}{[0,1]}$ is negligible if:\newline
+$\varepsilon(\lambda) = O(\frac{1}{poly(\lambda)})$
+
+
+\section{Probabilistic Polynomial Time Turing Machine - PPT}
+A Turing Machine - TM A is PPT if it's worst case's running time is polynomial in the input length.\newline
+For instance: $\exists p(\lambda) = poly(\lambda)$ s.t. $\forall x\in \bin^*$, $\forall r\in \bin^*$ (r is a \textbf{coin}, it represents randomness), $A(x,r)$ terminates after $p(\lambda)$ steps.
+
+
+\section{One-Way Function - OWF}
+A deterministic function $\func{p}{\bin^*}{\bin^*}$ is s OWF if it's difficult to invert.
+
+$\forall$PPT A, we have that $Pr[A \; wins] = negl(\lambda)$ in the following game:
+\begin{enumerate}
+    \item C picks a random $\unisample{x}{\bin^*}$
+    \item C calculates $y = f(x)$
+    \item C sends $y$ to A
+    \item A sends $x'$ to C
+\end{enumerate}
+
+A wins if $f(x') = y$, because A managed to invert $f$.

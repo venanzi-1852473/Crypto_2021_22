@@ -1,0 +1,39 @@
+\chapter{Signatures without ROM}
+
+\section{Bilinear Groups}
+Let $\bilgen$ be an algorithm that returns the following description:
+\[ \unisample{\bilgroup}{\bilgen} \]
+\begin{itemize}
+    \item[-] $\mathbb{G}$: cyclic group (moreover an elliptic curve group)
+    \item[-] $\mathbb{G}_T$: target group
+    \item[-] $q$: order of both Groups
+    \item[-] $g$: generator of $\mathbb{G}$
+    \item[-] $\hat{e}$: \textbf{pairing} function  
+\end{itemize}
+
+$\func{\hat{e}}{\mathbb{G} \times \mathbb{G}}{\mathbb{G}_T}$ s.t.
+\begin{itemize}
+    \item[-] $\forall g,h \in \mathbb{G}$ $\forall a,b \in \mathbb{Z}_q$ $\hat{e}(g^a, h^b) = \hat{e}(g,h)^{ab}$
+    \item[-] $\hat{e}(g,g) \neq 1$ (non degenerate)
+\end{itemize}
+
+
+\section{Construction of signatures}
+Let $\Pi = (KGen, Sign, Verify)$
+
+$\boldsymbol{\kgen}$:\newline
+$params: \unisample{\bilgroup}{\bilgen}$\newline
+$\unisample{a}{\mathbb{Z}_q}\newline g_1 = g^a\newline \unisample{g_2,\mu_0,...,\mu_k}{\mathbb{G}}$ ($\mu_0,...,\mu_k$ correspond to some kind of "hash function")
+
+$pk = (params, g_1, g_2, \mu_0, ..., \mu_k)$\newline
+$sk = g_2^a$
+
+$\boldsymbol{Sign(sk,m)}$:\newline
+$m = (m[1], ..., m[k]) \in \bin^k$\newline
+$\alpha_{\mu0, ..., \mu_k}(m) = \mu_0 \cdot \sum_{i=1}^k \mu_i^{m[i]}$
+
+$\unisample{r}{\mathbb{Z}_q}$\newline
+$\sigma = (sk \cdot \alpha(m)^r, g^r) = (g_2^a \cdot \alpha(m)^r, g^r) = (\sigma_1, \sigma_2)$
+
+$\boldsymbol{Verify(pk,m,\sigma)}$\newline
+Check $\hat{e}(g,\sigma_1) = \hat{e}(\sigma_2, \alpha(m)) \cdot \hat{e}(g_1,g_2)$

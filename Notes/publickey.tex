@@ -1,0 +1,95 @@
+\chapter{Public Key Encryption}
+
+\section{Key Generation}
+Each party can have a \textbf{public key} and a \textbf{secret key}. These two keys will be randomly sampled from an algorithm that generates them. This means that in PKE a primitive will also be composed of the key generation algorithm, besides the encryption and decryption ones.
+\[ \Pi = (KGen, Enc, Dec) \]
+
+A party will samples key in the following way:
+\[ \unisample{\keys}{\kgen} \]
+
+
+\section{TrapDoor Permutation - TDP}
+The idea is that a party has a secret key; without the key the permutation is like a OWF, it can't be inverted (unless with negligible probability).
+
+$\Pi = (KGen, f_{pk}, f_{sk}^{-1})$\newline
+$\unisample{\keys}{\kgen}$\newline
+$\func{f_{pk}}{X_{pk}}{X_{pk}}$\newline
+$\func{f_{sk}}{X_{pk}}{X_{pk}}$\newline
+By $KGen$: $\forall x \in X_{pk}$ $\forall (pk,sk)$ $f_{sk}^{-1}(f_{pk}(x)) = x$
+
+Consider the following game:
+\begin{enumerate}
+    \item C samples $\unisample{\keys}{\kgen}$
+    \item C samples $\unisample{x}{X_{pk}}$
+    \item C calculates $y = f_{pk}(x)$
+    \item C sends $y$ to A
+    \item A sends back $x'$
+\end{enumerate}
+A wins if $x' = x$
+
+
+\section{RSA}
+Define $n = p \cdot q$, where $p$ and $q$ are two primes. $X_{pk} = \zn$.\newline
+Fix some $e$. $d = e^{-1}$ $mod$ $\varphi(n)$ $=$ $e^{-1}$ $mod$ $(p-1)(q-1)$
+
+$f_{pk}(x) = x^e$ $mod$ $n$ $=c$\newline
+$f_{sk}^{-1}(c) = y^d$ \modn
+
+Consider $p,q,n,e,d$ as defined above, and consider the following game:
+\begin{enumerate}
+    \item C samples $\unisample{x}{X_{pk}}$
+    \item C calculates $y = x^e$ \modn
+    \item C sends $(n,e), y$ to A
+    \item A sends back $x'$
+\end{enumerate}
+A wins if $x' = x$
+
+
+\section{Hash Proof Systems}
+Both Alice and Bob have a problem $y$, but Alice also knows a solution $x$ for $y$. She wants to convince Bob that she know the solution to the problem, possibly without revealing $x$.\newline
+$y \in L$, where $L \subseteq NP$. $x$ is s.t. $R(x,y) = 1$.
+
+$y$ is a \textbf{statement}.\newline
+$x$ is a \textbf{valid witness} for $y$.
+
+There is a $\setup$ algorithm ran by a trusted part.\newline
+There are also two new algorithms: $Prove$ and $Verify$.
+
+The interation is the following:
+\begin{enumerate}
+    \item Trusted part runs $\unisample{\setupcpl}{\setup}$
+    \item Alice knows $x,y,\omega$
+    \item Bob knows $y,\tau$
+    \item Alice samples $\unisample{\pi}{Prove(\omega,y,x)}$
+    \item Alice sends $\pi$ to Bob
+    \item Bob calculates $\tilde{\pi} = Verify(\tau,\pi)$
+\end{enumerate}
+$y \in L  \leftrightarrow \tilde{\pi} = \pi$
+\newpage
+
+
+\section{t-universality}
+$\Pi = (Setup, Prove, Verify)$ is t-universal if $\forall$ distinct statements $y_1, ..., y_t$ s.t. $\forall i \in [t]$ $y_i \not\in L$, the following holds:
+\[ (\omega, Ver(\tau,y_1), ..., Ver(\tau,y_t)) \equiv (\omega, v_1, ..., v_t) \]
+Where:
+\begin{itemize}
+    \item[-] $\unisample{(\omega,\tau)}{\setup}$
+    \item[-] $\unisample{v_1, ..., v_t}{\mathcal{P}}$
+\end{itemize}
+$\mathcal{P}$ is the space where proves ($\pi, \tilde{\pi}$) are defined.
+
+
+\section{Membership indistinguishability - MI}
+The idea is that a language is membership indistinguishable if it's hard to understand whether a statement is in the language or not.
+
+A language $L \subseteq NP$ is MI if $\exists \bar{L}$ s.t.
+\begin{itemize}
+    \item[-] $L \cap \bar{L} = \varnothing$ and $L \cup \bar{L} = \mathcal{Y}$
+    \item[-] $\exists$ algorithm $Samp$ that generates $x,y$ s.t.
+            \begin{itemize}
+                \item[-] $\unisample{y}{\mathcal{Y}}$, $y \in L$
+                \item[-] $R(x,y) = 1$ 
+            \end{itemize} 
+    \item[-] $\exists$ algorithm $\overline{Samp}$ that generates $\unisample{y}{\mathcal{Y}}$ s.t. $y \in \bar{L}$
+    \item[-] $ \{ y \vert \unisample{(y,x)}{\samp} \} \compclose \{ y \vert \unisample{y}{\overline{Samp}(1^\lambda)} \} $ 
+\end{itemize}
