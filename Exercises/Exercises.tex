@@ -10,7 +10,8 @@
 \begin{questions}
     \question
         Prove or diprove: an encryption scheme is Perfectly Secret - PS $\leftrightarrow$ $\forall$distributions $M$ over $\mathcal{M}$, $\forall c_0, c_1 \in \mathcal{C}$ (ciphers):
-        \[ Pr[C=c_0] = Pr[C = c_1] \;\; C=Enc(K,M)\]
+        \[ Pr[C=c_0] = Pr[C = c_1] \;\; (C=Enc(K,M)) \]
+    \vspace{0.4cm}
     
     \question
         Alternatve definition to PS: prove that the following definition is equivalent to other definitions of PS.\newline
@@ -25,7 +26,8 @@
         A wins (i.e. output 1) if $b' = b$.
 
         $\forall A$ $Pr[GAME_{\Pi,A}^{IND}(\lambda) = 1] = \frac{1}{2}$
-    
+    \vspace{0.4cm}
+
     \question
         One-way NP puzzle fo relation R\newline
         $Gen(1^\lambda)$: $\unisample{(y,x)}{Gen(1^\lambda)}$ s.t. $R(y,x) = 1$.\newline
@@ -34,9 +36,11 @@
         It is OW because $\forall A$ $Pr[R(y,x')=1 \vert \unisample{(y,x)}{Gen(1^\lambda)}, \unisample{x'}{A(y)}] \leq negl(\lambda)$
 
         Prove that OWFs are equivalent to OW-NP Puzzle
-    
+    \vspace{0.4cm}
+
     \question
         Every PRF is a MAC. Show that there is a MAC which is not a PRF.
+    \vspace{0.4cm}
 
     \question
         Let $\func{H}{\bin^{2\lambda}}{\bin^\lambda}$ be a RO (i.e. a PRF in ROM). Prove $F(k,r) = H(k \|  r)$.
@@ -45,10 +49,12 @@
         $\cardinality{ Pr[A^{H(k,\cdot),H(\cdot)} (1^\lambda) = 1] - Pr[A^{R(\cdot),H(\cdot)} (1^\lambda) = 1]} \leq negl(\lambda)$
 
         \todo{Not sure what $F$ is, maybe the $F$ found as a solution (see the notebook) for the previous exercise}
+    \vspace{0.4cm}
 
     \question
         Let $f$ be a length preserving OWF with hardcore predicate $h$.\newline
         Show that $G(x) = f(x) \| h(x)$ is not a PRG.
+    \vspace{0.4cm}
 
     \question
         Let $\mathbb{G}$ be a group of order $q$, with generator $g$.
@@ -57,7 +63,7 @@
         Let $params = \unisample{\grp}{\grpgen}$
         \[ Pr[y=g^{a^2} \vert \unisample{a}{\mathbb{Z}_q}, \unisample{y}{A(params,g^a)} ] \leq negl(\lambda) \]
 
-        Prove CDH $\leftarrow$ Square DH. May assume it's possible to compute square roots in $\mathbb{G}$.
+        Prove CDH $\leftrightarrow$ Square DH. May assume it's possible to compute square roots in $\mathbb{G}$.
     \newpage
 
     \question
@@ -65,7 +71,7 @@
 
         \begin{enumerate}
             \item C samples keys $\unisample{\keys}{\kgen}$
-            \item C sends $pk$ to A and sends back $(m,\sigma)$, where $\unisample{m}{\mathcal{M}, \sigma ) Sign(sk,m)}$ (\poly) \fbox{How can A send C's $sk$?}
+            \item C sends $pk$ to A and sends back $(m,\sigma)$, where $\unisample{m}{\mathcal{M}}, \sigma = Sign(sk,m)$ (\poly) \fbox{Need to check: how can A send C's $sk$?}
             \item C sends to A message $\unisample{m^*}{\mathcal{M}}$
             \item A sends back $\sigma^*$
         \end{enumerate}
@@ -79,10 +85,11 @@
             \part
                 Show textbook RSA satisfies RUF-RMA
         \end{parts}
-
+    \vspace{0.4cm}
+    
     \question
-        Let $G = \mathbb{Z}_p^*$. DL is a OWF in $\mathbb{G}$.\newline
-        Show that $lsb(x)$ is NOT hard-core for $f_{DL}$, where $f_{DL}(x) = g^x$ $mod$ $p$
+        Let $G = \mathbb{Z}_p^*$. DL is a OWF in $G$.\newline
+        Show that $lsb(x)$ (i.e. Less Significant Bit) is NOT hard-core for $f_{DL}$, where $f_{DL}(x) = g^x$ $mod$ $p$
 
 \end{questions}
 
